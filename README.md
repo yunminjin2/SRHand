@@ -4,8 +4,8 @@
 
 [Minje Kim](https://yunminjin2.github.io), [Tae-Kyun Kim](https://sites.google.com/view/tkkim/home)
 
-[![report](https://img.shields.io/badge/Project-Page-blue)](https://yunminjin2.github.io/projects/bitt/)
-[![report](https://img.shields.io/badge/ArXiv-Paper-red)](https://arxiv.org/pdf/2403.08262.pdf)
+[![report](https://img.shields.io/badge/Project-Page-blue)](https://yunminjin2.github.io/projects/srhand/)
+[![report](https://img.shields.io/badge/ArXiv-Paper-red)](https://yunminjin2.github.io/projects/srhand/)
 <p align='center'>
     <img src='assets/Teaser.png'/>
 </p>
@@ -96,5 +96,5 @@ If you find this work useful, please consider citing our paper.
 
 ## Acknowledgements
  - Our code is based on [XHand](https://github.com/agnJason/XHand).
- - We also thank the authors of [InterHand2.6M](https://mks0601.github.io/InterHand2.6M/), [RGB2Hands](https://handtracker.mpi-inf.mpg.de/projects/RGB2Hands/Benchmark/RGB2HandsBenchmark.htm) for the useful dataset.
- - The renderer are based on the renderer from [Pytorch3D](https://pytorch3d.org/). 
+ - We also thank the authors of [InterHand2.6M](https://mks0601.github.io/InterHand2.6M/), [Goliath](https://github.com/facebookresearch/goliath) for the useful dataset.
+ - The renderer are based on the renderer from [nvdiffrast](https://github.com/NVlabs/nvdiffrast). 
