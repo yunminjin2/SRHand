@@ -20,7 +20,7 @@ from torchvision.transforms import GaussianBlur
 from torchvision.transforms.functional import to_pil_image
 import nvdiffrast.torch as dr
 from models.utils import tensor2img
-from dataset import LiifTrainDataset
+from dataset import GiifTrainDataset
 from models.giif import *
 from models.GAN import UNetDiscriminatorSN
 import random
@@ -57,15 +57,15 @@ class GiifTrainer:
             self.blurer = GaussianBlur(3)
         self.use_noise = conf.get_bool('use_noise')
         
-        self.liif_continue = conf.get_bool('liif_continue')
-        self.liif_epoch = conf.get_int('liif_epoch')
+        self.giif_continue = conf.get_bool('giif_continue')
+        self.giif_epoch = conf.get_int('giif_epoch')
         self.z_channels = conf.get_int('z_channels')
         self.ch_mult = conf.get_list('ch_mult')
         self.use_js = conf.get_bool('use_js')
         self.use_joint = conf.get_bool('use_joint', False)
         self.use_normals = conf.get_bool('use_normals', False)
         self.use_depths = conf.get_bool('use_depths', False)
-        self.use_rays = conf.get_bool('liif_use_rays', False)
+        self.use_rays = conf.get_bool('giif_use_rays', False)
         self.use_rdn = conf.get_bool('use_rdn', False)
         self.use_3d = conf.get_bool('use_3d', False)
         self.use_gan = conf.get_bool('use_gan', False)
@@ -93,7 +93,7 @@ class GiifTrainer:
         time.sleep(3)
         
     def prepare_data(self,data_path, data_name='interhand', split='test'):
-        self.dataset[split] = LiifTrainDataset(
+        self.dataset[split] = GiifTrainDataset(
             data_path=data_path,
             res=(self.w, self.h), 
             drop_cam=self.drop_cam, 
@@ -144,27 +144,27 @@ class GiifTrainer:
         ).cuda()
         if pretrain_path:
             state_dict = torch.load(pretrain_path).state_dict()
-            print('Loading Pretrained LIIF')
+            print('Loading Pretrained GIIF')
             self.model.load_state_dict(state_dict, strict=False)
         
     def set_log_path(self, out_dire, out_mesh_dire):
         self.out_dire = out_dire
         self.out_mesh_dire = out_mesh_dire
        
-    def pretrain(self, liif_model=None):
+    def pretrain(self, giif_model=None):
         gan_loss = nn.BCELoss()
         lpips_loss = lpips.LPIPS(net='vgg').cuda()
         
-        liif_optimizer = Adam([{'params': self.model.parameters(), 'lr': 0.0001}])
+        giif_optimizer = Adam([{'params': self.model.parameters(), 'lr': 0.0001}])
         if self.use_gan:
             disc_optimizer = Adam([{'params': self.disc.parameters(), 'lr': 0.001}])
             
-        scheduler = torch.optim.lr_scheduler.LambdaLR(liif_optimizer, lr_lambda=lambda x: max(1e-3, 10**(-x*0.0002)))
-        os.makedirs(join(self.out_mesh_dire, 'liif_images'), exist_ok=True)
+        scheduler = torch.optim.lr_scheduler.LambdaLR(giif_optimizer, lr_lambda=lambda x: max(1e-3, 10**(-x*0.0002)))
+        os.makedirs(join(self.out_mesh_dire, 'giif_images'), exist_ok=True)
         
         use_gan = False 
-        for epoch in range(self.liif_epoch):
-            # if epoch > self.liif_epoch // 2 and self.use_gan:
+        for epoch in range(self.giif_epoch):
+            # if epoch > self.giif_epoch // 2 and self.use_gan:
             #     use_gan = True
             pbar = tqdm(enumerate(self.dataloader['train']), total=len(self.dataloader['train']))
             psnrs = []
@@ -230,9 +230,9 @@ class GiifTrainer:
                     disc_loss = gan_loss(fake_pred, (torch.ones_like(fake_pred) / 2) * (1 - src_mask) + torch.ones_like(fake_pred) * src_mask)
                     tot_loss = tot_loss + disc_loss
                             
-                liif_optimizer.zero_grad()
+                giif_optimizer.zero_grad()
                 tot_loss.backward()
-                liif_optimizer.step()
+                giif_optimizer.step()
                 scheduler.step()
                 
                 psnr = calculate_psnr(src_img[0].permute(1, 2, 0).detach().cpu().numpy(), np.clip(out[0].permute(1, 2, 0).detach().cpu().numpy(), 0, 1), src_mask[0].detach().cpu().numpy()) 
@@ -297,9 +297,9 @@ class GiifTrainer:
                         save_img = torch.cat([save_img, render_img[:, :3]], 3).clamp(0, 1)
                     # save_img = torch.cat([pair_img, pair_25d_img, src_ori_img, src_25d_img, lr_img, out], 3)
                     for b in range(save_img.shape[0]):
-                        cv2.imwrite(join(self.out_mesh_dire, 'liif_images', '%02d_%02d.png' % (epoch, b)), tensor2img(save_img, b))
+                        cv2.imwrite(join(self.out_mesh_dire, 'giif_images', '%02d_%02d.png' % (epoch, b)), tensor2img(save_img, b))
 
-                    if i % self.log_step == 0 or i == self.liif_epoch -1:
+                    if i % self.log_step == 0 or i == self.giif_epoch -1:
                         self.step = epoch * len(self.dataloader['train']) + i
                         log_dict = {
                             'disc_loss': (real_loss + fake_loss).item(),
@@ -328,7 +328,7 @@ class GiifTrainer:
         print("Finished Disc Pretraining")
         torch.save(self.model, join(self.out_mesh_dire, 'giif.pth'))
         if self.use_gan:
-            print("Finished LIIF Pretraining")
+            print("Finished giif Pretraining")
             torch.save(self.disc, join(self.out_mesh_dire, 'disc.pth'))
         
     @torch.no_grad()

@@ -214,7 +214,7 @@ def img_adjust(img):
     return cv2.cvtColor(adjusted, cv2.COLOR_RGB2BGR)
 
 
-class LiifTrainDataset(Dataset):
+class GiifTrainDataset(Dataset):
     def __init__(self, data_path, res=(336, 512), drop_cam=[], split='train', cam_id=None, test_num=30, return_ray=False, num_frame=20, adjust=True, mano_layer=mano_layer, hand_type='right', limit=None, subject_limit=None):
         self.data_path = data_path
         self.adjust = adjust

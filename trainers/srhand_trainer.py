@@ -144,10 +144,10 @@ class SRHandTrainer:
         self.ch_mult = conf.get_list('ch_mult')
         
         self.exp_name = conf.get_string('exp_name')
-        self.use_liif = conf.get_bool('use_liif', False)
-        self.liif_use_3d = conf.get_bool('liif_use_3d', False)
-        self.liif_pretrain_path = conf.get_string('liif_model', None)
-        self.liif_epoch = conf.get_int('liif_epoch', 0)
+        self.use_giif = conf.get_bool('use_giif', False)
+        self.giif_use_3d = conf.get_bool('giif_use_3d', False)
+        self.giif_pretrain_path = conf.get_string('giif_model', None)
+        self.giif_epoch = conf.get_int('giif_epoch', 0)
         self.epoch_implicit = conf.get_int('epoch_implicit', 10)
         self.wavelet_weight = conf.get_float('wavelet_weight', 1)
         self.disc_weight = conf.get_float('disc_weight', 1)
@@ -267,8 +267,8 @@ class SRHandTrainer:
         self.sh_coeffs_not_initialized = True       
         
         self.implicit_net = None
-        if self.use_liif:
-            if self.liif_use_3d:
+        if self.use_giif:
+            if self.giif_use_3d:
                 self.implicit_net = GIIF(
                     encoder_spec={
                         'name': 'rdn-baseline',
@@ -291,12 +291,12 @@ class SRHandTrainer:
       
         
         
-            liif_pretrain_path = join(self.liif_pretrain_path, 'giif.pth')
+            giif_pretrain_path = join(self.giif_pretrain_path, 'giif.pth')
             if self.is_continue and os.path.exists(join(self.out_mesh_dire, 'implicit_model.pth')):
-                liif_pretrain_path = join(self.out_mesh_dire, 'implicit_model.pth')
+                giif_pretrain_path = join(self.out_mesh_dire, 'implicit_model.pth')
             
-            print('Loading Pretrained GIIF from '+ liif_pretrain_path)
-            state_dict = torch.load(liif_pretrain_path).state_dict()
+            print('Loading Pretrained GIIF from '+ giif_pretrain_path)
+            state_dict = torch.load(giif_pretrain_path).state_dict()
             self.implicit_net.load_state_dict(state_dict, strict=False)
             self.implicit_net.eval()
             
@@ -559,7 +559,7 @@ class SRHandTrainer:
                     
     def update_sr(self, ori_step=False):
         os.makedirs(join(self.out_mesh_dire, 'rerender', '%02d'  % (self.step)), exist_ok=True)
-        if self.use_liif:
+        if self.use_giif:
             self.implicit_net.eval()
         
         rendered_img = []
@@ -605,9 +605,9 @@ class SRHandTrainer:
                 
                 im_feat = None
                 render_img = torch.cat([img, F.interpolate(lr_img, self.w).permute(0, 2, 3, 1)], dim=2)
-                if self.use_liif:
+                if self.use_giif:
                     with torch.no_grad():   
-                        if self.liif_use_3d:
+                        if self.giif_use_3d:
                             src_dict = {
                                 'img': lr_img,
                                 'vertices': verts_mano,
@@ -1109,7 +1109,7 @@ class SRHandTrainer:
         self.model = self.model.cuda()
                     
         optimizer = Adam([{'params': self.model.parameters(), 'lr': 0.001}])
-        if self.use_liif and self.use_consist:
+        if self.use_giif and self.use_consist:
             sr_optimizer = Adam([{'params': self.implicit_net.imnet.parameters(), 'lr': 0.001}])
         start_epoch = 1
         train_render = False
@@ -1131,7 +1131,7 @@ class SRHandTrainer:
             
             if self.optimizer_path and os.path.exists(self.optimizer_path):
                 optimizer.load_state_dict(torch.load(self.optimizer_path).state_dict())
-            if self.use_liif and self.use_consist:                   
+            if self.use_giif and self.use_consist:                   
                 if self.implicit_optimizer_path and os.path.exists(self.implicit_optimizer_path):
                     sr_optimizer.load_state_dict(torch.load(self.implicit_optimizer_path).state_dict())
         
@@ -1146,7 +1146,7 @@ class SRHandTrainer:
                     'model': self.model
                 }, join(self.out_mesh_dire, 'model.pth'))
                 torch.save(optimizer, join(self.out_mesh_dire, 'optimizer.pth'))
-                if self.use_liif and self.use_consist:
+                if self.use_giif and self.use_consist:
                     torch.save(self.implicit_net, join(self.out_mesh_dire, 'implicit_model.pth'))
                     torch.save(sr_optimizer, join(self.out_mesh_dire, 'implicit_optimizer.pth'))
             
@@ -1196,7 +1196,7 @@ class SRHandTrainer:
             'model': self.model
         }, join(self.out_mesh_dire, 'model.pth'))
         torch.save(optimizer, join(self.out_mesh_dire, 'optimizer.pth'))
-        if self.use_liif and self.use_consist:
+        if self.use_giif and self.use_consist:
             torch.save(self.implicit_net, join(self.out_mesh_dire, 'implicit_model.pth'))
             torch.save(sr_optimizer, join(self.out_mesh_dire, 'implicit_optimizer.pth'))
         print('Finished {}'.format(self.exp_name))
@@ -1204,9 +1204,9 @@ class SRHandTrainer:
     @torch.no_grad()
     def eval(self, xhand_path=None, implicit_path=None, save_vis=True, save_mesh=False,):
         
-        if self.use_liif and implicit_path:
+        if self.use_giif and implicit_path:
             state_dict = torch.load(join(implicit_path)).state_dict()
-            print('Loading Opimized LIIF from ', implicit_path)
+            print('Loading Opimized giif from ', implicit_path)
             self.implicit_net.load_state_dict(state_dict, strict=False)
 
         if xhand_path is None:
@@ -1314,7 +1314,7 @@ class SRHandTrainer:
                 img[pred_mask == 0] = 0
                 
                 lr_img = F.interpolate(sr_comp_img.permute(0, 3, 1, 2), self.lr_size).permute(0, 2, 3, 1)
-                if self.use_liif:
+                if self.use_giif:
                     src_dict = {
                         'img': lr_img.permute(0, 3, 1, 2),
                         'vertices': verts_mano,
@@ -1326,7 +1326,7 @@ class SRHandTrainer:
                         }
                     }
                     mano_img = torch.zeros_like(img).cuda()
-                    if self.liif_use_3d:
+                    if self.giif_use_3d:
                         # mano_img, _, mano_mask = self.implicit_net.render_hand(verts_mano, mano_verts_color.unsqueeze(0), w2c, proj, self.glctx, self.mano_faces, out_size=(self.w, self.h))
                         # sr_img = self.implicit_net.forward_img(lr_img, mano_img.permute(0, 3, 1, 2), out_size=(self.w, self.h))
                         sr_img, _ = self.implicit_net(src_dict, self.glctx, hr_size=(self.w, self.h))
