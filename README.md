@@ -44,6 +44,11 @@ python main_giif.py --conf conf/giif_16_256_128.conf
 
 python main_disc.py --conf conf/disc_16_256_128.conf 
 ```
+
+You can download GIIF checkpoint [here](https://drive.google.com/drive/folders/1N7Zc3JS4BpblJFEefL27zF0J3C_5XYyI?usp=sharing)!
+Put ```giif.pth``` and ```disc.pth``` in ```./interhand_out/Capture0_ROM03_RT_No_Occlusion/GIIF_16_256/```.
+
+
 ## Validating GIIF
 ```
 python main_disc.py --conf conf/disc_16_256_128.conf --eval --model_path PATH_TO_GIIF --model_path_disc PATH_TO_DISCRIMINATOR
@@ -51,7 +56,7 @@ python main_disc.py --conf conf/disc_16_256_128.conf --eval --model_path PATH_TO
 
 (e.g)
 ```
-python main_disc.py --conf conf/disc_16_256_128.conf --eval  --model_path ./interhand_out/Capture0_ROM03_RT_No_Occlusion/GIIF_16_256/liif.pth --model_path_disc ./interhand_out/Capture0_ROM03_RT_No_Occlusion/Disc_GIIF_16_256/disc.pth
+python main_disc.py --conf conf/disc_16_256_128.conf --eval  --model_path ./interhand_out/Capture0_ROM03_RT_No_Occlusion/GIIF_16_256/giif.pth --model_path_disc ./interhand_out/Capture0_ROM03_RT_No_Occlusion/Disc_GIIF_16_256/disc.pth
 ```
 
 ## Training SRHand
@@ -65,9 +70,9 @@ python main.py --conf conf/ih_GIIF_16_256.conf
 ## Validating SRHand
 To validate SRHand, use below code.
 
-'''
+```
 python main.py --conf conf/ih_GIIF_test.conf --eval --r --model_path FOLDER_PATH_EXPERIMENT
-'''
+```
 
 (e.g)
 ```
