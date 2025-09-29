@@ -5,7 +5,7 @@
 [Minje Kim](https://yunminjin2.github.io), [Tae-Kyun Kim](https://sites.google.com/view/tkkim/home)
 
 [![report](https://img.shields.io/badge/Project-Page-blue)](https://yunminjin2.github.io/projects/srhand/)
-[![report](https://img.shields.io/badge/ArXiv-Paper-red)](https://yunminjin2.github.io/projects/srhand/)
+[![report](https://img.shields.io/badge/ArXiv-Paper-red)](https://arxiv.org/abs/2509.21859)
 <p align='center'>
     <img src='assets/TeaserVideo.gif'/>
 </p>
