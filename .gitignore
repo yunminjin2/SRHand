@@ -2,3 +2,7 @@
 *.js
 *.pyc
 *.pkl
+*.png
+*.txt
+*.obj
+*.pt

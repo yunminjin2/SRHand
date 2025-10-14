@@ -266,7 +266,7 @@ class GiifTrainer:
                     out_real_pred = torch.mean((real_pred[0, src_mask[0] == 1]).detach())
                     out_fake_pred = torch.mean((fake_pred[0, src_mask[0] == 1]).detach())
                 
-                    des += ' disc_loss: R : %.3f F : %.3f' % (real_loss.mean().item(), fake_loss.mean().item())+ 'out_pred : R : %.3f, F : %.3f' %(out_real_pred, out_fake_pred)
+                    des += ' disc_loss: R : %.3f F : %.3f' % (real_loss.mean().item(), fake_loss.mean().item())+ ' out_pred : R : %.3f, F : %.3f' %(out_real_pred, out_fake_pred)
                 
                 pbar.set_description(des)
                 

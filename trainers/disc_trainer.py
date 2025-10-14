@@ -266,7 +266,7 @@ class DiscTrainer:
                 out_fake_pred = torch.mean((fake_pred[0, src_mask[0] == 1]).detach())
                 
                 des = 'Epoch:%02d'% epoch + ' disc_loss: R : %.3f F : %.3f' % (real_loss.mean().item(), fake_loss.mean().item())+ 'out_pred : R : %.3f, F : %.3f' %(out_real_pred, out_fake_pred)
-                des += 'l1:%.3f'% loss_l1.item() + ' psnr:%.3f' % psnr
+                des += ' l1:%.3f'% loss_l1.item() + ' psnr:%.3f' % psnr
                 
                 pbar.set_description(des)
                 

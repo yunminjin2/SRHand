@@ -18,8 +18,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim import Adam
 import nvdiffrast.torch as dr
-from models.utils import get_normals, laplacian_smoothing, compute_color
-from get_data import mano_layer, get_interhand_seqdatabyframe
+from get_data import mano_layer
 
 from repose import lbs, lbs_pose, pose2rot
 from trainers.giif_trainer import GiifTrainer
