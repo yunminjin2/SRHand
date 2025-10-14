@@ -38,14 +38,14 @@ pip install -r requirements.txt
 4. Download Interhand2.6M (5 fps) dataset and set the dataset paths in config file in conf folder.
 
 ## Training GIIF
-
+First train giif with ```main_giif.py```, and then enhance its quality with ```main_disc.py``` file.
 ```
 python main_giif.py --conf conf/giif_16_256_128.conf
 
 python main_disc.py --conf conf/disc_16_256_128.conf 
 ```
 
-You can download GIIF checkpoint [here](https://drive.google.com/drive/folders/1N7Zc3JS4BpblJFEefL27zF0J3C_5XYyI?usp=sharing)!
+You can download GIIF checkpoint [here](https://drive.google.com/drive/folders/1zgtZj8rkf3BwwM60GtlMfUlrjJKkatrs?usp=drive_link)!
 Put ```giif.pth``` and ```disc.pth``` in ```./interhand_out/Capture0_ROM03_RT_No_Occlusion/GIIF_16_256/```.
 
 
@@ -56,19 +56,19 @@ python main_disc.py --conf conf/disc_16_256_128.conf --eval --model_path PATH_TO
 
 (e.g)
 ```
-python main_disc.py --conf conf/disc_16_256_128.conf --eval  --model_path ./interhand_out/Capture0_ROM03_RT_No_Occlusion/GIIF_16_256/giif.pth --model_path_disc ./interhand_out/Capture0_ROM03_RT_No_Occlusion/Disc_GIIF_16_256/disc.pth
+python main_disc.py --conf conf/disc_16_256_128.conf --eval  --model_path ./interhand_out/Capture0_ROM03_RT_No_Occlusion/Disc_GIIF_16_256/giif.pth --model_path_disc ./interhand_out/Capture0_ROM03_RT_No_Occlusion/Disc_GIIF_16_256/disc.pth
 ```
 
 ## Training SRHand
 
-After you have finished traning GIIF, you can now train SRHand.
+After you have finished training GIIF, you can now train SRHand.
 
 ```
 python main.py --conf conf/ih_GIIF_16_256.conf
 ```
 
 ## Validating SRHand
-To validate SRHand, use below code.
+To validate SRHand, use the code below.
 
 ```
 python main.py --conf conf/ih_GIIF_test.conf --eval --r --model_path FOLDER_PATH_EXPERIMENT
@@ -79,7 +79,7 @@ python main.py --conf conf/ih_GIIF_test.conf --eval --r --model_path FOLDER_PATH
 python main.py --conf conf/ih_GIIF_test.conf --eval --r --model_path ./interhand_out/Capture0_ROM03_RT_No_Occlusion/SRHand_16 
 ```
 
-To save visualization result, give —save_vis option.
+To save the visualization result, give the —save_vis option.
 
 
 
