@@ -42,16 +42,16 @@ First train giif with ```main_giif.py```, and then enhance its quality with ```m
 ```
 python main_giif.py --conf conf/giif_16_256_128.conf
 
-python main_disc.py --conf conf/disc_16_256_128.conf 
+python main_disc.py --conf conf/disc_16_256_128.conf --model_path {PATH_TO_GIIF}
 ```
 
-You can download GIIF checkpoint [here](https://drive.google.com/drive/folders/1zgtZj8rkf3BwwM60GtlMfUlrjJKkatrs?usp=drive_link)!
-Put ```giif.pth``` and ```disc.pth``` in ```./interhand_out/Capture0_ROM03_RT_No_Occlusion/GIIF_16_256/```.
+You can download the GIIF checkpoint [here](https://drive.google.com/drive/folders/1zgtZj8rkf3BwwM60GtlMfUlrjJKkatrs?usp=drive_link)!
+Put ```giif.pth``` and ```disc.pth``` in ```./interhand_out/Capture0_ROM03_RT_No_Occlusion/Disc_GIIF_16_256/```.
 
 
 ## Validating GIIF
 ```
-python main_disc.py --conf conf/disc_16_256_128.conf --eval --model_path PATH_TO_GIIF --model_path_disc PATH_TO_DISCRIMINATOR
+python main_disc.py --conf conf/disc_16_256_128.conf --eval --model_path {PATH_TO_GIIF(Disc)} --model_path_disc {PATH_TO_DISCRIMINATOR}
 ```
 
 (e.g)
@@ -71,7 +71,7 @@ python main.py --conf conf/ih_GIIF_16_256.conf
 To validate SRHand, use the code below.
 
 ```
-python main.py --conf conf/ih_GIIF_test.conf --eval --r --model_path FOLDER_PATH_EXPERIMENT
+python main.py --conf conf/ih_GIIF_test.conf --eval --r --model_path {FOLDER_PATH_EXPERIMENT}
 ```
 
 (e.g)
